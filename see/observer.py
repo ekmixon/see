@@ -148,7 +148,8 @@ def synchronous(function, event):
 def get_function_logger(function):
     if hasattr(function, '__self__'):
         return logging.getLogger(
-            "%s.%s" % (function.__module__,
-                       function.__self__.__class__.__name__))
+            f"{function.__module__}.{function.__self__.__class__.__name__}"
+        )
+
     else:
         return logging.getLogger(function.__module__)

@@ -109,7 +109,7 @@ class ImageTest(unittest.TestCase):
         expected_image_path = self.config['disk']['image']['provider_configuration']['path'] + '/1111'
         assert resources.provider_image == expected_image_path
 
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     @mock.patch('see.image_providers.helpers.hashlib')
     @mock.patch('see.image_providers.helpers.os')
     def test_image_unavailable_target_does_not_exist(self, _hom, hashlib_mock, _, s3_mock, os_mock):
@@ -133,8 +133,10 @@ class ImageTest(unittest.TestCase):
         assert resources.provider_image == expected_image_path
         s3_mock.Object.assert_called_with(self.config['disk']['image']['provider_configuration']['bucket_name'],
                                           self.config['disk']['image']['name'])
-        downloader.download_file.assert_called_with(expected_image_path + '.part')
-        os_mock.rename.assert_called_once_with(expected_image_path + '.part', expected_image_path)
+        downloader.download_file.assert_called_with(f'{expected_image_path}.part')
+        os_mock.rename.assert_called_once_with(
+            f'{expected_image_path}.part', expected_image_path
+        )
 
     def test_image_unavailable_target_is_dir_no_cached(self, s3_mock, os_mock):
         """The image is not available remotely or in the configured target directory."""
@@ -154,9 +156,9 @@ class ImageTest(unittest.TestCase):
             _ = resources.provider_image
         s3_mock.Object.assert_called_with(self.config['disk']['image']['provider_configuration']['bucket_name'],
                                           self.config['disk']['image']['name'])
-        downloader.download_file.assert_called_with(expected_image_path + '.part')
+        downloader.download_file.assert_called_with(f'{expected_image_path}.part')
 
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     @mock.patch('see.image_providers.helpers.hashlib')
     @mock.patch('see.image_providers.helpers.os')
     def test_stale_image_exists(self, _hom, hashlib_mock, _, s3_mock, os_mock):
@@ -180,7 +182,7 @@ class ImageTest(unittest.TestCase):
         assert resources.provider_image == expected_image_path
         s3_mock.Object.assert_called_with(self.config['disk']['image']['provider_configuration']['bucket_name'],
                                           self.config['disk']['image']['name'])
-        downloader.download_file.assert_called_with(expected_image_path + '.part')
+        downloader.download_file.assert_called_with(f'{expected_image_path}.part')
 
     def test_same_name_image_is_downloading_older_exists(self, s3_mock, os_mock):
         """There is an ongoing download for the requested image but there is an older version on disk."""
@@ -222,7 +224,7 @@ class ImageTest(unittest.TestCase):
         s3_mock.Object.assert_not_called()
         downloader.download_file.assert_not_called()
 
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     @mock.patch('see.image_providers.helpers.hashlib')
     @mock.patch('see.image_providers.helpers.os')
     def test_checksum_mismatch(self, _hom, hashlib_mock, _, s3_mock, os_mock):
@@ -248,5 +250,5 @@ class ImageTest(unittest.TestCase):
         expected_image_path = self.config['disk']['image']['provider_configuration']['path'] + '/1111'
         s3_mock.Object.assert_called_with(self.config['disk']['image']['provider_configuration']['bucket_name'],
                                           self.config['disk']['image']['name'])
-        downloader.download_file.assert_called_with(expected_image_path + '.part')
-        os_mock.remove.assert_called_once_with(expected_image_path + '.part')
+        downloader.download_file.assert_called_with(f'{expected_image_path}.part')
+        os_mock.remove.assert_called_once_with(f'{expected_image_path}.part')

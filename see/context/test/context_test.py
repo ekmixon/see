@@ -170,15 +170,11 @@ class SeeContextTest(unittest.TestCase):
             for state in STATES:
                 if method.__name__ in context.context.STATES_MAP[state]:
                     self.context.domain.state.return_value = [state]
-                    self.hook.context.subscribe('pre_%s' % method.__name__,
-                                                self.hook.pre_handler)
-                    self.hook.context.subscribe('post_%s' % method.__name__,
-                                                self.hook.post_handler)
+                    self.hook.context.subscribe(f'pre_{method.__name__}', self.hook.pre_handler)
+                    self.hook.context.subscribe(f'post_{method.__name__}', self.hook.post_handler)
                     method()
-                    self.assertEqual(self.hook.pre_event,
-                                     'pre_%s' % method.__name__)
-                    self.assertEqual(self.hook.post_event,
-                                     'post_%s' % method.__name__)
+                    self.assertEqual(self.hook.pre_event, f'pre_{method.__name__}')
+                    self.assertEqual(self.hook.post_event, f'post_{method.__name__}')
 
     def test_shutdown_event_triggering(self):
         """Pre and Post shutdown is triggered."""

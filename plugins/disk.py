@@ -75,8 +75,12 @@ class DiskCheckPointHook(Hook):
     def setup_handlers(self):
         if 'checkpoint_on_event' in self.configuration:
             configured_events = self.configuration['checkpoint_on_event']
-            events = (isinstance(configured_events, str)
-                      and [configured_events] or configured_events)
+            events = (
+                [configured_events]
+                if isinstance(configured_events, str)
+                else configured_events
+            )
+
 
             for event in events:
                 self.context.subscribe(event, self.disk_checkpoint_handler)
@@ -216,12 +220,23 @@ def snapshot_to_checkpoint(volume, snapshot, folder_path):
     create_folder(folder_path)
 
     name = snapshot.getName()
-    path = os.path.join(folder_path, '%s.qcow2' % name)
+    path = os.path.join(folder_path, f'{name}.qcow2')
 
-    process = launch_process(QEMU_IMG, "convert", "-f", "qcow2", "-o",
-                             "backing_file=%s" % volume_backing_path(volume),
-                             "-O", "qcow2", "-s", name,
-                             volume_path(volume), path)
+    process = launch_process(
+        QEMU_IMG,
+        "convert",
+        "-f",
+        "qcow2",
+        "-o",
+        f"backing_file={volume_backing_path(volume)}",
+        "-O",
+        "qcow2",
+        "-s",
+        name,
+        volume_path(volume),
+        path,
+    )
+
     collect_process_output(process)
 
     return path

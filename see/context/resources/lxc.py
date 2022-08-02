@@ -135,8 +135,11 @@ def domain_create(hypervisor, identifier, configuration, network_name=None):
 
     if 'filesystem' in configuration:
         if isinstance(configuration['filesystem'], (list, tuple)):
-            for mount in configuration['filesystem']:
-                mounts.append(mountpoint(mount, identifier))
+            mounts.extend(
+                mountpoint(mount, identifier)
+                for mount in configuration['filesystem']
+            )
+
         else:
             mounts.append(mountpoint(configuration['filesystem'], identifier))
 
@@ -151,21 +154,22 @@ def domain_delete(domain, logger, filesystem):
     @raise: libvirt.libvirtError.
 
     """
-    if domain is not None:
-        try:
-            if domain.isActive():
-                domain.destroy()
-        except libvirt.libvirtError:
-            logger.exception("Unable to destroy the domain.")
-        try:
-            domain.undefine()
-        except libvirt.libvirtError:
-            logger.exception("Unable to undefine the domain.")
-        try:
-            if filesystem is not None and os.path.exists(filesystem):
-                shutil.rmtree(filesystem)
-        except Exception:
-            logger.exception("Unable to remove the shared folder.")
+    if domain is None:
+        return
+    try:
+        if domain.isActive():
+            domain.destroy()
+    except libvirt.libvirtError:
+        logger.exception("Unable to destroy the domain.")
+    try:
+        domain.undefine()
+    except libvirt.libvirtError:
+        logger.exception("Unable to undefine the domain.")
+    try:
+        if filesystem is not None and os.path.exists(filesystem):
+            shutil.rmtree(filesystem)
+    except Exception:
+        logger.exception("Unable to remove the shared folder.")
 
 
 class LXCResources(resources.Resources):

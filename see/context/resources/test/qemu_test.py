@@ -19,16 +19,16 @@ class DomainXMLTest(unittest.TestCase):
         """QEMU XML without network."""
         config = """<domain></domain>"""
         expected = """<domain><name>foo</name><uuid>foo</uuid><devices><disk device="disk" type="file">""" +\
-                   """<source file="/diskpath.qcow2" /></disk></devices></domain>"""
+                       """<source file="/diskpath.qcow2" /></disk></devices></domain>"""
         results = qemu.domain_xml('foo', config, '/diskpath.qcow2')
         self.assertEqual(results, expected, compare(results, expected))
 
     def test_domain_xml_modifies(self):
         """QEMU Fields are modified if existing."""
         config = """<domain><name>bar</name><uuid>bar</uuid><devices><disk device="disk" type="file">""" +\
-                 """<source file="/bar"/></disk></devices></domain>"""
+                     """<source file="/bar"/></disk></devices></domain>"""
         expected = """<domain><name>foo</name><uuid>foo</uuid><devices><disk device="disk" type="file">""" +\
-                   """<source file="/diskpath.qcow2" /></disk></devices></domain>"""
+                       """<source file="/diskpath.qcow2" /></disk></devices></domain>"""
         results = qemu.domain_xml('foo', config, '/diskpath.qcow2')
         self.assertEqual(results, expected, compare(results, expected))
 
@@ -36,18 +36,18 @@ class DomainXMLTest(unittest.TestCase):
         """QEMU XML with network fields are modified if existing."""
         config = """<domain></domain>"""
         expected = """<domain><name>foo</name><uuid>foo</uuid><devices><disk device="disk" type="file">""" +\
-                   """<source file="/bar" /></disk><interface type="network"><source network="foo" />""" +\
-                   """</interface></devices></domain>"""
+                       """<source file="/bar" /></disk><interface type="network"><source network="foo" />""" +\
+                       """</interface></devices></domain>"""
         results = qemu.domain_xml('foo', config, '/bar', network_name='foo')
         self.assertEqual(results, expected, compare(results, expected))
 
     def test_domain_xml_network_modifies(self):
         """QEMU XML with network."""
         config = """<domain><devices><interface type="network">""" +\
-                 """<source network="bar"/></interface></devices></domain>"""
+                     """<source network="bar"/></interface></devices></domain>"""
         expected = """<domain><devices><interface type="network"><source network="foo" /></interface>""" +\
-                   """<disk device="disk" type="file"><source file="/bar" /></disk>""" +\
-                   """</devices><name>foo</name><uuid>foo</uuid></domain>"""
+                       """<disk device="disk" type="file"><source file="/bar" /></disk>""" +\
+                       """</devices><name>foo</name><uuid>foo</uuid></domain>"""
         results = qemu.domain_xml('foo', config, '/bar', network_name='foo')
         self.assertEqual(results, expected, compare(results, expected))
 
@@ -75,7 +75,7 @@ class DiskXMLTest(unittest.TestCase):
         """QEMU XML without COW fields are modified if existing."""
         pool_config = """<pool><target><path>/poolpath</path></target></pool>"""
         disk_config = """<volume><target><path>/path/volume.qcow2</path></target><name>bar</name>""" +\
-                      """<capacity>10</capacity></volume>"""
+                          """<capacity>10</capacity></volume>"""
         expected = """<volume type="file">
   <name>foo</name>
   <uuid>foo</uuid>
@@ -95,10 +95,10 @@ class DiskXMLTest(unittest.TestCase):
         pool_config = """<pool><target><path>/poolpath</path></target></pool>"""
         disk_config = """<volume><target><path>/path/volume.qcow2</path></target><capacity>10</capacity></volume>"""
         expected = """<volume type="file"><name>foo</name><uuid>foo</uuid><target>""" +\
-                   """<path>/poolpath/foo.qcow2</path><permissions><mode>0644</mode>""" +\
-                   """</permissions><format type="qcow2" />""" +\
-                   """</target><capacity>10</capacity><backingStore><path>/path/volume.qcow2</path>""" +\
-                   """<format type="qcow2" /></backingStore></volume>"""
+                       """<path>/poolpath/foo.qcow2</path><permissions><mode>0644</mode>""" +\
+                       """</permissions><format type="qcow2" />""" +\
+                       """</target><capacity>10</capacity><backingStore><path>/path/volume.qcow2</path>""" +\
+                       """<format type="qcow2" /></backingStore></volume>"""
         results = qemu.disk_xml('foo', pool_config, disk_config, True)
         results = results.replace('\n', '').replace('\t', '').replace('  ', '')
         self.assertEqual(results, expected, compare(results, expected))
@@ -109,7 +109,7 @@ class DomainCreateTest(unittest.TestCase):
         """QEMU Create with no network."""
         xml = """<domain></domain>"""
         expected = """<domain><name>foo</name><uuid>foo</uuid><devices><disk device="disk" type="file">""" +\
-                   """<source file="/diskpath.qcow2" /></disk></devices></domain>"""
+                       """<source file="/diskpath.qcow2" /></disk></devices></domain>"""
         hypervisor = mock.Mock()
         hypervisor.listNetworks.return_value = []
         with mock.patch('see.context.resources.qemu.open', mock.mock_open(read_data=xml), create=True):
@@ -121,8 +121,8 @@ class DomainCreateTest(unittest.TestCase):
         """QEMU Create with network."""
         xml = """<domain></domain>"""
         expected = """<domain><name>foo</name><uuid>foo</uuid><devices><disk device="disk" type="file">""" +\
-                   """<source file="/diskpath.qcow2" /></disk><interface type="network">""" +\
-                   """<source network="foo" /></interface></devices></domain>"""
+                       """<source file="/diskpath.qcow2" /></disk><interface type="network">""" +\
+                       """<source network="foo" /></interface></devices></domain>"""
         hypervisor = mock.Mock()
         hypervisor.listNetworks.return_value = []
         with mock.patch('see.context.resources.qemu.open', mock.mock_open(read_data=xml), create=True):
@@ -172,7 +172,7 @@ class PoolCreateTest(unittest.TestCase):
     def test_create(self, exists_mock, makedirs):
         """QEMU Create Pool."""
         expected = """<pool type='dir'><name>foo</name><uuid>foo</uuid><target>""" +\
-                   """<path>/pool/path/foo</path></target></pool>"""
+                       """<path>/pool/path/foo</path></target></pool>"""
         hypervisor = mock.Mock()
         exists_mock.return_value = False
         qemu.pool_create(hypervisor, 'foo', '/pool/path')
@@ -255,12 +255,12 @@ class DiskCloneTest(unittest.TestCase):
         hypervisor.storageVolLookupByPath.side_effect = libvirt.libvirtError('BAM!')
         pool.XMLDesc.return_value = """<pool><target><path>/pool/path</path></target></pool>"""
         volume.XMLDesc.return_value = """<volume><target><path>/path/volume.qcow2</path>""" +\
-                                      """</target><capacity>10</capacity></volume>"""
+                                          """</target><capacity>10</capacity></volume>"""
         expected = """<volume type="file"><name>foo</name><uuid>foo</uuid><target>""" +\
-                   """<path>/pool/path/foo.qcow2</path><permissions>""" +\
-                   """<mode>0644</mode></permissions>""" +\
-                   """<format type="qcow2" /></target>""" +\
-                   """<capacity>10</capacity></volume>"""
+                       """<path>/pool/path/foo.qcow2</path><permissions>""" +\
+                       """<mode>0644</mode></permissions>""" +\
+                       """<format type="qcow2" /></target>""" +\
+                       """<capacity>10</capacity></volume>"""
         with self.assertRaises(libvirt.libvirtError) as error:
             qemu.disk_clone(hypervisor, 'foo', pool, {}, '/foo/bar/baz.qcow2', logger)
         self.assertFalse('/' in etree.fromstring(hypervisor.storagePoolDefineXML.call_args[0][0]).find('.//name').text)
@@ -274,12 +274,12 @@ class DiskCloneTest(unittest.TestCase):
         hypervisor.storageVolLookupByPath.return_value = volume
         pool.XMLDesc.return_value = """<pool><target><path>/pool/path</path></target></pool>"""
         volume.XMLDesc.return_value = """<volume><target><path>/path/volume.qcow2</path>""" +\
-                                      """</target><capacity>10</capacity></volume>"""
+                                          """</target><capacity>10</capacity></volume>"""
         expected = """<volume type="file"><name>foo</name><uuid>foo</uuid><target>""" +\
-                   """<path>/pool/path/foo.qcow2</path><permissions>""" +\
-                   """<mode>0644</mode></permissions>""" +\
-                   """<format type="qcow2" /></target>""" +\
-                   """<capacity>10</capacity></volume>"""
+                       """<path>/pool/path/foo.qcow2</path><permissions>""" +\
+                       """<mode>0644</mode></permissions>""" +\
+                       """<format type="qcow2" /></target>""" +\
+                       """<capacity>10</capacity></volume>"""
         qemu.disk_clone(hypervisor, 'foo', pool, {}, '/foo/bar/baz.qcow2', logger)
         results = pool.createXMLFrom.call_args_list[0][0][0]
         results = results.replace('\n', '').replace('\t', '').replace('  ', '')
@@ -294,12 +294,12 @@ class DiskCloneTest(unittest.TestCase):
         hypervisor.storageVolLookupByPath.return_value = volume
         pool.XMLDesc.return_value = """<pool><target><path>/pool/path</path></target></pool>"""
         volume.XMLDesc.return_value = """<volume><target><path>/path/volume.qcow2</path></target>""" +\
-                                      """<capacity>10</capacity></volume>"""
+                                          """<capacity>10</capacity></volume>"""
         expected = """<volume type="file"><name>foo</name><uuid>foo</uuid><target>""" +\
-                   """<path>/pool/path/foo.qcow2</path><permissions><mode>0644</mode></permissions>""" +\
-                   """<format type="qcow2" /></target><capacity>10</capacity>""" +\
-                   """<backingStore><path>/path/volume.qcow2</path><format type="qcow2" />""" +\
-                   """</backingStore></volume>"""
+                       """<path>/pool/path/foo.qcow2</path><permissions><mode>0644</mode></permissions>""" +\
+                       """<format type="qcow2" /></target><capacity>10</capacity>""" +\
+                       """<backingStore><path>/path/volume.qcow2</path><format type="qcow2" />""" +\
+                       """</backingStore></volume>"""
         qemu.disk_clone(hypervisor, 'foo', pool, {'copy_on_write': True}, '/foo/bar/baz.qcow2', logger)
         results = pool.createXML.call_args_list[0][0][0]
         results = results.replace('\n', '').replace('\t', '').replace('  ', '')
@@ -325,7 +325,7 @@ class ResourcesTest(unittest.TestCase):
 
     @mock.patch('see.context.resources.qemu.libvirt')
     @mock.patch('see.context.resources.qemu.domain_create')
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     def test_allocate_default(self, _, create_mock, libvirt_mock, network_mock):
         """QEMU Resources allocator with no extra value and old style image definition."""
         network_mock.lookup.return_value = None
@@ -338,7 +338,7 @@ class ResourcesTest(unittest.TestCase):
 
     @mock.patch('see.context.resources.qemu.libvirt')
     @mock.patch('see.context.resources.qemu.domain_create')
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     def test_allocate_dummy_provider(self, _, create_mock, libvirt_mock, network_mock):
         """QEMU Resources allocator with no extra value and dummy image provider."""
         network_mock.lookup.return_value = None
@@ -353,7 +353,7 @@ class ResourcesTest(unittest.TestCase):
 
     @mock.patch('see.context.resources.qemu.libvirt')
     @mock.patch('see.context.resources.qemu.domain_create')
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     def test_allocate_hypervisor(self, _, create_mock, libvirt_mock, network_mock):
         """QEMU Resources allocator with hypervisor."""
         network_mock.lookup.return_value = None
@@ -369,7 +369,7 @@ class ResourcesTest(unittest.TestCase):
     @mock.patch('see.context.resources.qemu.domain_create')
     @mock.patch('see.context.resources.qemu.disk_clone')
     @mock.patch('see.context.resources.qemu.pool_create')
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     def test_allocate_clone(self, _, pool_mock, disk_mock, create_mock,
                             libvirt_mock, network_mock):
         """QEMU Resources allocator with disk cloning."""
@@ -395,7 +395,7 @@ class ResourcesTest(unittest.TestCase):
 
     @mock.patch('see.context.resources.qemu.libvirt')
     @mock.patch('see.context.resources.qemu.domain_create')
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     def test_allocate_network(self, _, create_mock, libvirt_mock, network_mock):
         """QEMU Resources allocator with network."""
         network = mock.Mock()
@@ -414,7 +414,7 @@ class ResourcesTest(unittest.TestCase):
 
     @mock.patch('see.context.resources.qemu.libvirt')
     @mock.patch('see.context.resources.qemu.domain_create')
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     def test_allocate_fail(self, _, create_mock, libvirt_mock, network_mock):
         """QEMU network is destroyed on allocation fail."""
         network = mock.Mock()

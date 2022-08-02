@@ -47,7 +47,7 @@ class ScreenHook(Hook):
 
     def setup_handlers(self):
         screenshots = self.configuration.get('screenshot_on_event', ())
-        events = isinstance(screenshots, str) and [screenshots] or screenshots
+        events = [screenshots] if isinstance(screenshots, str) else screenshots
 
         for event in events:
             self.context.subscribe(event, self.screenshot_handler)
@@ -64,8 +64,7 @@ class ScreenHook(Hook):
         self.assert_context_state()
 
         folder_path = self.configuration['results_folder']
-        screenshot_path = os.path.join(folder_path,
-                                       "%s_%s.ppm" % (self.identifier, event))
+        screenshot_path = os.path.join(folder_path, f"{self.identifier}_{event}.ppm")
         create_folder(folder_path)
 
         with open(screenshot_path, 'wb') as screenshot_file:

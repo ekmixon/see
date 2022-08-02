@@ -335,22 +335,22 @@ class SeeContext(Context):
 
         """
         self._assert_transition(event)
-        self.trigger('pre_%s' % event, **kwargs)
+        self.trigger(f'pre_{event}', **kwargs)
         self._execute_command(command, *args)
-        self.trigger('post_%s' % event, **kwargs)
+        self.trigger(f'post_{event}', **kwargs)
 
     def _assert_transition(self, event):
         """Asserts the state transition validity."""
         state = self.domain.state()[0]
         if event not in STATES_MAP[state]:
-            raise RuntimeError("State transition %s not allowed" % event)
+            raise RuntimeError(f"State transition {event} not allowed")
 
     def _execute_command(self, command, *args):
         """Execute the state transition command."""
         try:
             command(*args)
         except libvirt.libvirtError as error:
-            raise RuntimeError("Unable to execute command. %s" % error)
+            raise RuntimeError(f"Unable to execute command. {error}")
 
 
 def interface_lookup(interfaces, hwaddr, address_type):

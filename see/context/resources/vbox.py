@@ -93,19 +93,20 @@ def domain_delete(domain, logger):
     @raise: libvirt.libvirtError.
 
     """
-    if domain is not None:
+    if domain is None:
+        return
+    try:
+        if domain.isActive():
+            domain.destroy()
+    except libvirt.libvirtError:
+        logger.exception("Unable to destroy the domain.")
+    try:
+        domain.undefine()
+    except libvirt.libvirtError:
         try:
-            if domain.isActive():
-                domain.destroy()
+            domain.undefineFlags(libvirt.VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA)  # domain with snapshots
         except libvirt.libvirtError:
-            logger.exception("Unable to destroy the domain.")
-        try:
-            domain.undefine()
-        except libvirt.libvirtError:
-            try:
-                domain.undefineFlags(libvirt.VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA)  # domain with snapshots
-            except libvirt.libvirtError:
-                logger.exception("Unable to undefine the domain.")
+            logger.exception("Unable to undefine the domain.")
 
 
 class VBoxResources(resources.Resources):

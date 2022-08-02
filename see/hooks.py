@@ -44,8 +44,7 @@ class HookManager(object):
         self.hooks = []
         self.identifier = identifier
         self.configuration = configuration
-        self.logger = logging.getLogger(
-            '%s.%s' % (self.__module__, self.__class__.__name__))
+        self.logger = logging.getLogger(f'{self.__module__}.{self.__class__.__name__}')
 
     def load_hooks(self, context):
         """

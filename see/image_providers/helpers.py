@@ -22,10 +22,10 @@ def verify_checksum(path, checksum):
     block_size = os.statvfs(path).f_bsize
     with open(path, 'rb') as f:
         while True:
-            chunk = f.read(block_size)
-            if not chunk:
+            if chunk := f.read(block_size):
+                hash_md5.update(chunk)
+            else:
                 break
-            hash_md5.update(chunk)
     return hash_md5.hexdigest() == checksum
 
 
@@ -42,6 +42,5 @@ def verify_etag(path, etag):
             chunk_count += 1
     stream.seek(0)
     if chunk_count > 1:
-        return '{}-{}'.format(hashlib.md5(stream.read()).hexdigest(),
-                              chunk_count) == etag
+        return f'{hashlib.md5(stream.read()).hexdigest()}-{chunk_count}' == etag
     return hashlib.md5(stream.read()).hexdigest() == etag

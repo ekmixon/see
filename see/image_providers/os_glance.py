@@ -61,11 +61,10 @@ class GlanceProvider(ImageProvider):
             if os.path.exists(self.configuration['path']):
                 if os.path.isfile(os.path.realpath(self.configuration['path'])):
                     return self.configuration['path']
-                else:
-                    for image in self._find_potentials():
-                        tgt = os.path.join(self.configuration['path'], image.id)
-                        if os.path.exists(tgt):
-                            return tgt
+                for image in self._find_potentials():
+                    tgt = os.path.join(self.configuration['path'], image.id)
+                    if os.path.exists(tgt):
+                        return tgt
             raise
 
         if (os.path.exists(self.configuration['path']) and
@@ -112,9 +111,16 @@ class GlanceProvider(ImageProvider):
 
     def _retrieve_metadata(self):
         try:
-            return sorted([image for image in self.glance_client.images.list(
-                filters={'name': self.name, 'status': 'active'})],
-                          key=lambda x: x.updated_at, reverse=True)[0]
+            return sorted(
+                list(
+                    self.glance_client.images.list(
+                        filters={'name': self.name, 'status': 'active'}
+                    )
+                ),
+                key=lambda x: x.updated_at,
+                reverse=True,
+            )[0]
+
         except IndexError:
             raise FileNotFoundError(self.name)
 
@@ -140,7 +146,7 @@ class GlanceProvider(ImageProvider):
                     imagefile.write(chunk)
             if not verify_checksum(partfile, img_metadata.checksum):
                 os.remove(partfile)
-                raise RuntimeError('Checksum failure. File: %s' % target)
+                raise RuntimeError(f'Checksum failure. File: {target}')
             os.rename(partfile, target)
             if self.configuration.get('libvirt_pool'):
                 import libvirt

@@ -24,7 +24,7 @@ class DomainXMLTest(unittest.TestCase):
         """LXC XML with filesystem."""
         config = """<domain></domain>"""
         expected = """<domain><name>foo</name><uuid>foo</uuid><devices><filesystem type="mount">""" +\
-                   """<source dir="foo" /><target dir="bar" /></filesystem></devices></domain>"""
+                       """<source dir="foo" /><target dir="bar" /></filesystem></devices></domain>"""
         results = lxc.domain_xml('foo', config, [('foo', 'bar')])
         self.assertEqual(results, expected, compare(results, expected))
 
@@ -32,7 +32,7 @@ class DomainXMLTest(unittest.TestCase):
         """LXC Fields are modified if existing."""
         config = """<domain><name>bar</name><uuid>bar</uuid></domain>"""
         expected = """<domain><name>foo</name><uuid>foo</uuid><devices><filesystem type="mount">""" +\
-                   """<source dir="foo" /><target dir="bar" /></filesystem></devices></domain>"""
+                       """<source dir="foo" /><target dir="bar" /></filesystem></devices></domain>"""
         results = lxc.domain_xml('foo', config, [('foo', 'bar')])
         self.assertEqual(results, expected, compare(results, expected))
 
@@ -40,18 +40,18 @@ class DomainXMLTest(unittest.TestCase):
         """LXC XML with network fields are modified if existing."""
         config = """<domain></domain>"""
         expected = """<domain><name>foo</name><uuid>foo</uuid><devices><filesystem type="mount">""" +\
-                   """<source dir="foo" /><target dir="bar" /></filesystem><interface type="network">""" +\
-                   """<source network="foo" /></interface></devices></domain>"""
+                       """<source dir="foo" /><target dir="bar" /></filesystem><interface type="network">""" +\
+                       """<source network="foo" /></interface></devices></domain>"""
         results = lxc.domain_xml('foo', config, [('foo', 'bar')], network_name='foo')
         self.assertEqual(results, expected, compare(results, expected))
 
     def test_domain_xml_network_modifies(self):
         """LXC XML with network."""
         config = """<domain><devices><interface type="network">""" +\
-                 """<source network="bar"/></interface></devices></domain>"""
+                     """<source network="bar"/></interface></devices></domain>"""
         expected = """<domain><devices><interface type="network"><source network="foo" /></interface>""" +\
-                   """<filesystem type="mount"><source dir="foo" /><target dir="bar" /></filesystem>""" +\
-                   """</devices><name>foo</name><uuid>foo</uuid></domain>"""
+                       """<filesystem type="mount"><source dir="foo" /><target dir="bar" /></filesystem>""" +\
+                       """</devices><name>foo</name><uuid>foo</uuid></domain>"""
         results = lxc.domain_xml('foo', config, [('foo', 'bar')], network_name='foo')
         self.assertEqual(results, expected, compare(results, expected))
 
@@ -72,7 +72,7 @@ class DomainCreateTest(unittest.TestCase):
         """LXC Create with single filesystem."""
         xml = """<domain></domain>"""
         expected = """<domain><name>foo</name><uuid>foo</uuid><devices><filesystem type="mount">""" +\
-                   """<source dir="/bar/foo" /><target dir="/baz" /></filesystem></devices></domain>"""
+                       """<source dir="/bar/foo" /><target dir="/baz" /></filesystem></devices></domain>"""
         hypervisor = mock.Mock()
         hypervisor.listNetworks.return_value = []
         with mock.patch('see.context.resources.lxc.open', mock.mock_open(read_data=xml), create=True):
@@ -87,8 +87,8 @@ class DomainCreateTest(unittest.TestCase):
         """LXC Create with multiple filesystem."""
         xml = """<domain></domain>"""
         expected = """<domain><name>foo</name><uuid>foo</uuid><devices><filesystem type="mount">""" +\
-                   """<source dir="/bar/foo" /><target dir="/baz" /></filesystem><filesystem type="mount">""" +\
-                   """<source dir="/dead/foo" /><target dir="/beef" /></filesystem></devices></domain>"""
+                       """<source dir="/bar/foo" /><target dir="/baz" /></filesystem><filesystem type="mount">""" +\
+                       """<source dir="/dead/foo" /><target dir="/beef" /></filesystem></devices></domain>"""
         hypervisor = mock.Mock()
         hypervisor.listNetworks.return_value = []
         with mock.patch('see.context.resources.lxc.open', mock.mock_open(read_data=xml), create=True):
@@ -105,8 +105,8 @@ class DomainCreateTest(unittest.TestCase):
         """LXC Create with network."""
         xml = """<domain></domain>"""
         expected = """<domain><name>foo</name><uuid>foo</uuid><devices><filesystem type="mount">""" +\
-                   """<source dir="/bar/foo" /><target dir="/baz" /></filesystem><interface type="network">""" +\
-                   """<source network="foo" /></interface></devices></domain>"""
+                       """<source dir="/bar/foo" /><target dir="/baz" /></filesystem><interface type="network">""" +\
+                       """<source network="foo" /></interface></devices></domain>"""
         hypervisor = mock.Mock()
         hypervisor.listNetworks.return_value = []
         with mock.patch('see.context.resources.lxc.open', mock.mock_open(read_data=xml), create=True):

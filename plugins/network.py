@@ -78,7 +78,7 @@ class NetworkTracerHook(Hook):
         self.logger.debug("Event %s: starting network tracing.", event)
 
         create_folder(folder_path)
-        self.pcap_path = os.path.join(folder_path, "%s.pcap" % self.identifier)
+        self.pcap_path = os.path.join(folder_path, f"{self.identifier}.pcap")
 
         command = [TSHARK, '-w', self.pcap_path,
                    '-i', self.context.network.bridgeName()]
@@ -103,9 +103,12 @@ class NetworkTracerHook(Hook):
                                % tshark_log)
 
     def cleanup(self):
-        if self.configuration.get('delete_trace_file', False):
-            if self.pcap_path is not None and os.path.exists(self.pcap_path):
-                os.remove(self.pcap_path)
+        if (
+            self.configuration.get('delete_trace_file', False)
+            and self.pcap_path is not None
+            and os.path.exists(self.pcap_path)
+        ):
+            os.remove(self.pcap_path)
 
 
 class NetworkAnalysisHook(Hook):

@@ -63,7 +63,7 @@ class MemoryHook(Hook):
 
     def setup_handlers(self):
         snapshots = self.configuration.get('memory_snapshots_on_event', ())
-        events = isinstance(snapshots, str) and [snapshots] or snapshots
+        events = [snapshots] if isinstance(snapshots, str) else snapshots
 
         for event in events:
             self.context.subscribe(event, self.snapshot_handler)
@@ -206,10 +206,13 @@ def memory_snapshot(context, memory_dump_path, compress):
 
 
 def process_memory_snapshot(snapshot_path, profile, plugin):
-    process = launch_process('volatility',
-                             '--profile=%s' % profile,
-                             '--filename=%s' % snapshot_path,
-                             plugin)
-    file_name = '%s_%s.log' % (snapshot_path.split('.')[0], plugin)
+    process = launch_process(
+        'volatility',
+        f'--profile={profile}',
+        f'--filename={snapshot_path}',
+        plugin,
+    )
+
+    file_name = f"{snapshot_path.split('.')[0]}_{plugin}.log"
 
     collect_process_output(process, file_name)

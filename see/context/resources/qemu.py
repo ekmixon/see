@@ -175,7 +175,7 @@ def disk_xml(identifier, pool_xml, base_volume_xml, cow):
     base_volume = etree.fromstring(base_volume_xml)
     pool_path = pool.find('.//path').text
     base_path = base_volume.find('.//target/path').text
-    target_path = os.path.join(pool_path, '%s.qcow2' % identifier)
+    target_path = os.path.join(pool_path, f'{identifier}.qcow2')
     volume_xml = VOLUME_DEFAULT_CONFIG.format(identifier, target_path)
     volume = etree.fromstring(volume_xml)
     base_volume_capacity = base_volume.find(".//capacity")
@@ -306,8 +306,10 @@ def disk_clone(hypervisor, identifier, storage_pool, configuration, image, logge
     except libvirt.libvirtError:
         if os.path.exists(image):
             pool_path = os.path.dirname(image)
-            logger.info("LibVirt pool does not exist, creating {} pool".format(
-                pool_path.replace('/', '_')))
+            logger.info(
+                f"LibVirt pool does not exist, creating {pool_path.replace('/', '_')} pool"
+            )
+
             pool = hypervisor.storagePoolDefineXML(BASE_POOL_CONFIG.format(
                 pool_path.replace('/', '_'), pool_path))
             pool.setAutostart(True)
@@ -315,8 +317,7 @@ def disk_clone(hypervisor, identifier, storage_pool, configuration, image, logge
             pool.refresh()
             volume = hypervisor.storageVolLookupByPath(image)
         else:
-            raise RuntimeError(
-                "%s disk does not exist." % image)
+            raise RuntimeError(f"{image} disk does not exist.")
 
     xml = disk_xml(identifier, storage_pool.XMLDesc(0), volume.XMLDesc(0), cow)
 

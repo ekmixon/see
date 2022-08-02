@@ -31,8 +31,7 @@ class Hook(Observer):
     def __init__(self, parameters):
         super(Hook, self).__init__(parameters.identifier, parameters.context)
         self.configuration = parameters.configuration
-        self.logger = logging.getLogger(
-            '%s.%s' % (self.__module__, self.__class__.__name__))
+        self.logger = logging.getLogger(f'{self.__module__}.{self.__class__.__name__}')
 
     def cleanup(self):
         raise NotImplementedError("Not implemented")
@@ -44,8 +43,7 @@ class ImageProvider(object):
         super(ImageProvider, self).__init__()
         self.configuration = parameters.get('provider_configuration')
         self.name = parameters.get('name')
-        self.logger = logging.getLogger(
-            '%s.%s' % (self.__module__, self.__class__.__name__))
+        self.logger = logging.getLogger(f'{self.__module__}.{self.__class__.__name__}')
 
     @property
     def image(self):

@@ -116,7 +116,7 @@ def run_command(args, asynchronous=False):
                                stderr=subprocess.STDOUT)
 
     try:
-        timeout = asynchronous and 1 or None
+        timeout = 1 if asynchronous else None
         output = process.communicate(timeout=timeout)[0].decode('utf8')
     except subprocess.TimeoutExpired:
         pass

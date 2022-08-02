@@ -25,7 +25,6 @@ def lookup_class(fully_qualified_name):
     Class = getattr(module, class_name)
 
     if not inspect.isclass(Class):
-        raise TypeError(
-            "%s is not of type class: %s" % (class_name, type(Class)))
+        raise TypeError(f"{class_name} is not of type class: {type(Class)}")
 
     return Class

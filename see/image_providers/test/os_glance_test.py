@@ -110,7 +110,7 @@ class ImageTest(unittest.TestCase):
         expected_image_path = self.config['disk']['image']['provider_configuration']['path'] + '/3'
         assert resources.provider_image == expected_image_path
 
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     @mock.patch('see.image_providers.helpers.hashlib')
     @mock.patch('see.image_providers.helpers.os')
     def test_image_unavailable_target_does_not_exist(self, _hom, hashlib_mock, open_mock, glance_mock, os_mock, _):
@@ -151,7 +151,7 @@ class ImageTest(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             _ = resources.provider_image
 
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     @mock.patch('see.image_providers.helpers.hashlib')
     @mock.patch('see.image_providers.helpers.os')
     def test_stale_image_exists(self, _hom, hashlib_mock, open_mock, glance_mock, os_mock, _):
@@ -176,7 +176,7 @@ class ImageTest(unittest.TestCase):
                          open_mock.call_args_list)
         os_mock.remove.assert_not_called()
 
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     @mock.patch('see.image_providers.helpers.hashlib')
     def test_same_name_image_is_downloading_older_exists(self, hashlib_mock, open_mock, glance_mock, os_mock, _):
         glance_mock.images.list.return_value = [self.image1, self.image2]
@@ -198,7 +198,7 @@ class ImageTest(unittest.TestCase):
         open_mock.assert_not_called()
         os_mock.remove.assert_not_called()
 
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     @mock.patch('see.image_providers.helpers.hashlib')
     def test_same_name_image_is_downloading_older_does_not_exist(self, hashlib_mock, open_mock, glance_mock, os_mock, _):
         glance_mock.images.list.return_value = [self.image1, self.image2]
@@ -220,7 +220,7 @@ class ImageTest(unittest.TestCase):
         open_mock.assert_not_called()
         os_mock.remove.assert_not_called()
 
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     @mock.patch('see.image_providers.helpers.hashlib')
     @mock.patch('see.image_providers.helpers.os')
     def test_same_name_images_exist(self, _hom, hashlib_mock, open_mock, glance_mock, os_mock, _):
@@ -244,7 +244,7 @@ class ImageTest(unittest.TestCase):
                          open_mock.call_args_list)
         os_mock.remove.assert_not_called()
 
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     @mock.patch('see.image_providers.helpers.hashlib')
     @mock.patch('see.image_providers.helpers.os')
     def test_checksum_mismatch(self, _hom, hashlib_mock, open_mock, glance_mock, os_mock, _):
@@ -266,9 +266,17 @@ class ImageTest(unittest.TestCase):
 
         glance_mock.images.data.assert_called_with('1')
 
-        self.assertEqual([mock.call('/foo/bar.part', 'wb'),
-                          mock.call('/foo/bar.part', 'rb')],
-                         [call for call in open_mock.call_args_list if
-                          call == mock.call('/foo/bar.part', 'wb') or
-                          call == mock.call('/foo/bar.part', 'rb')])
+        self.assertEqual(
+            [mock.call('/foo/bar.part', 'wb'), mock.call('/foo/bar.part', 'rb')],
+            [
+                call
+                for call in open_mock.call_args_list
+                if call
+                in [
+                    mock.call('/foo/bar.part', 'wb'),
+                    mock.call('/foo/bar.part', 'rb'),
+                ]
+            ],
+        )
+
         os_mock.remove.assert_called_once_with('/foo/bar.part')

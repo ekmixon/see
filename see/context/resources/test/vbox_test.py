@@ -18,16 +18,16 @@ class DomainXMLTest(unittest.TestCase):
         """VBOX Domain XML."""
         config = """<domain></domain>"""
         expected = """<domain><name>foo</name><uuid>foo</uuid><devices><disk device="disk" type="file">""" +\
-                   """<source file="/diskpath.vdi" /></disk></devices></domain>"""
+                       """<source file="/diskpath.vdi" /></disk></devices></domain>"""
         results = vbox.domain_xml('foo', config, '/diskpath.vdi')
         self.assertEqual(results, expected, compare(results, expected))
 
     def test_domain_xml_modifies(self):
         """VBOX Fields are modified if existing."""
         config = """<domain><name>bar</name><uuid>bar</uuid><devices><disk device="disk" type="file">""" +\
-                 """<source file="/bar"/></disk></devices></domain>"""
+                     """<source file="/bar"/></disk></devices></domain>"""
         expected = """<domain><name>foo</name><uuid>foo</uuid><devices><disk device="disk" type="file">""" +\
-                   """<source file="/diskpath.vdi" /></disk></devices></domain>"""
+                       """<source file="/diskpath.vdi" /></disk></devices></domain>"""
         results = vbox.domain_xml('foo', config, '/diskpath.vdi')
         self.assertEqual(results, expected, compare(results, expected))
 
@@ -37,7 +37,7 @@ class DomainCreateTest(unittest.TestCase):
         """VBOX Create domain."""
         xml = """<domain></domain>"""
         expected = """<domain><name>foo</name><uuid>foo</uuid><devices><disk device="disk" type="file">""" +\
-                   """<source file="/diskpath.vdi" /></disk></devices></domain>"""
+                       """<source file="/diskpath.vdi" /></disk></devices></domain>"""
         hypervisor = mock.Mock()
         hypervisor.listNetworks.return_value = []
         with mock.patch('see.context.resources.vbox.open', mock.mock_open(read_data=xml), create=True):
@@ -90,7 +90,7 @@ class ResourcesTest(unittest.TestCase):
 
     @mock.patch('see.context.resources.vbox.libvirt')
     @mock.patch('see.context.resources.vbox.domain_create')
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     def test_allocate_default(self, _, create_mock, libvirt_mock):
         """VBOX Resources allocater with no extra value."""
         resources = vbox.VBoxResources('foo',
@@ -103,7 +103,7 @@ class ResourcesTest(unittest.TestCase):
 
     @mock.patch('see.context.resources.vbox.libvirt')
     @mock.patch('see.context.resources.vbox.domain_create')
-    @mock.patch('%s.open' % builtin_module, new_callable=mock.mock_open)
+    @mock.patch(f'{builtin_module}.open', new_callable=mock.mock_open)
     def test_allocate_hypervisor(self, _, create_mock, libvirt_mock):
         """VBOX Resources allocater with hypervisor."""
         resources = vbox.VBoxResources('foo', {'domain': 'bar',

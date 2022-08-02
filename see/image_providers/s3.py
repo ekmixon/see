@@ -112,7 +112,7 @@ class S3Provider(ImageProvider):
 
             if not verify_etag(partfile, metadata.e_tag.strip('"')):
                 os.remove(partfile)
-                raise RuntimeError('Checksum failure. File: %s' % target)
+                raise RuntimeError(f'Checksum failure. File: {target}')
             os.rename(partfile, target)
 
             if self.configuration.get('libvirt_pool'):

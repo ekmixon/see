@@ -53,7 +53,8 @@ class Environment(object):
         self._contextfactory = contextfactory
         self.configuration = configuration
         self.logger = logger or logging.getLogger(
-            "%s.%s" % (self.__module__, self.__class__.__name__))
+            f"{self.__module__}.{self.__class__.__name__}"
+        )
 
     def __enter__(self):
         self.allocate()
@@ -103,9 +104,8 @@ def load_configuration(configuration):
     """Returns a dictionary, accepts a dictionary or a path to a JSON file."""
     if isinstance(configuration, dict):
         return configuration
-    else:
-        with open(configuration) as configfile:
-            return json.load(configfile)
+    with open(configuration) as configfile:
+        return json.load(configfile)
 
 
 def cleanup(logger, *args):

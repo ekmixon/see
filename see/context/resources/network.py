@@ -103,9 +103,9 @@ def create(hypervisor, identifier, configuration):
         except libvirt.libvirtError as error:
             if next(counter) > MAX_ATTEMPTS:
                 raise RuntimeError(
-                    "Exceeded failed attempts ({}) to get IP address.".format(
-                        MAX_ATTEMPTS),
-                    "Last error: {}".format(error))
+                    f"Exceeded failed attempts ({MAX_ATTEMPTS}) to get IP address.",
+                    f"Last error: {error}",
+                )
 
 
 def lookup(domain):
@@ -138,7 +138,7 @@ def delete(network):
     try:
         network.destroy()
     except libvirt.libvirtError as error:
-        raise RuntimeError("Unable to destroy network: {}".format(error))
+        raise RuntimeError(f"Unable to destroy network: {error}")
 
 
 def network_xml(identifier, xml, address=None):
@@ -156,7 +156,7 @@ def network_xml(identifier, xml, address=None):
 
     subelement(network, './/name', 'name', identifier)
     subelement(network, './/uuid', 'uuid', identifier)
-    subelement(network, './/bridge', 'bridge', None, name='virbr-%s' % netname)
+    subelement(network, './/bridge', 'bridge', None, name=f'virbr-{netname}')
 
     if address is not None:
         set_address(network, address)
